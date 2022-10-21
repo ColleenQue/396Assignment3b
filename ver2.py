@@ -1,10 +1,9 @@
 import sys
+import binascii
 
 print('This message will be displayed on the screen.')
 
 original_stdout = sys.stdout # Save a reference to the original standard output
-
-
 
   
 def strtohex(a):
@@ -16,7 +15,7 @@ def xor (a,b) :
 def hextoascii(a):
   return bytearray.fromhex(a).decode()
 
-listofmessage =[
+messages =[
 '000d16251c07044b36171c0307280858291403500a2003450029001e5930070e52',
 '0d0d15713c49000a2c521d120f224f0125004d00163d100011380d0359330a0b4d',
 '151f00221a04064b2d1c0a571a2f021d6a050c145326054505231311102a084701',
@@ -29,19 +28,23 @@ listofmessage =[
 '030d45221d06160726521d120f2a03016a190403072a18450623413b1b360e1501',
 '1a090d71020c430a30174f13012f011f6a02081c1f6f010c06240e0f0d64070253']
 
-message = '4E696B6F734E696B6F734E696B6F734E696B6F734E696B6F734E696B6F734E69B6'
-message2 = '63727970746F63727970746F63727970746F63727970746F63727970746F637279'
-#message3 = '4E696B6F73204E696B6F73204E696B6F73204E696B6F73204E696B6F73204E696B'
-#message3 = '4E696B6F7320547269616E646F706F756C6F73204E696B6F7320547269616E646F'
 
-#message3 =  '63727970746F202020202020202020202020202020202020202020202020202020'
-message3 = '4E696B6F732E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E'
-message4 = '63727970746F20616E616C7973697363727970746F20616E616C79736973222222'
+length = input("enter string to check > ")
+text = length.encode("utf-8") 
+length = len(length)
+
+text = binascii.hexlify(text).decode("utf-8") 
+
+
+while len(text) < 66:
+  text += '2E'
+print(text)
+
+crypto = '63727970746F2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E'
+Nikos = '4E696B6F732E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E'
 
 #xor hexidecimal 
-
-xored = '18161c53180845430e00454d1502084546050f444f0f5361151d13194900085700'
-
+m = text
 #message = Nikos = 4E696B6F73
 #message = crypto = 63727970746F
 
@@ -49,9 +52,9 @@ xored = '18161c53180845430e00454d1502084546050f444f0f5361151d13194900085700'
 #use a for loop to go through the messages increment of 2
 
 store = []
-for x in listofmessage:
+for x in messages:
   #y is the string of y
-  y = xor(strtohex(listofmessage[0]),strtohex(x))
+  y = xor(strtohex(messages[0]),strtohex(x))
   store +=[y[2:]]
   
 print (store)
@@ -64,40 +67,25 @@ print (store)
 
 #c1 xor key = m
 
-'''
-for x in range(30):
-  print("-----------------")
-  print(x)
-  print("-----------------")
-  print(hextoascii(message3))
-  for i,y in enumerate(listofmessage):
-    print(str(i)+'=====================')
-    temp = xor(strtohex(message3),strtohex(y))
-    #print(temp)
 
-    #look at where nikos is
-    print(hextoascii(temp[2:])[x:x+6])
-  message3 = '20' + message3[:-2]
-
-'''
 
 with open('filename.txt', 'w') as f:
     sys.stdout = f # Change the standard output to the file we created.
         
-    for x in range(30):
+    for x in range(28):
       print("-----------------")
       print(x)
-      print(hextoascii(message3))
+      print(hextoascii(m))
       print("-----------------")
-      for i,y in enumerate(store):
-        temp = xor(strtohex(y),strtohex(message3))
+      for i,y in enumerate(messages):
+        temp = xor(strtohex(y),strtohex(m))
         #print(temp)
       
         #look at where nikos is
         #only print the part that gets xored effectively
       
-        print(str(i)+'  '+hextoascii(temp[2:]) [x:x+5])
-      message3 = '2E' + message3[:-2]
+        print(str(i)+'  '+hextoascii(temp[2:]) [x:x+length])
+      m = '2E' + m[:-2]
     
     print('This message will be written to a file.')
     sys.stdout = original_stdout # Reset the standard output to its original value
